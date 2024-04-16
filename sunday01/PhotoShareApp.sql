@@ -90,6 +90,8 @@ create table users(
 INSERT INTO users (username) VALUES('PRABHAT'),('ANKIT'),('AMAN'),('AKASH'),('PAWAN'),('SAMEER'),('MAYANK')
 
 
+INSERT INTO users (username) VALUES('Hitesh'),('Hari'),('Amar Deep'),('Chand Deep'),('Mohan'),('Shivam'),('Lalla')
+
 SELECT * FROM USERS
 
 
@@ -108,3 +110,70 @@ values
 ('https//img5.jpg',3)
 
 select * from photos
+
+--find All photos with details which user upload which photo
+
+select u.userName,p.url from users u,photos p where u.id=p.user_id
+
+--diffent way of write same query
+
+select userName,url from photos Join users On users.id=photos.user_id
+
+->Foregin Key Constarints Around Insertion
+3 Possibilty we considers 
+1 -> we insert a phots that is tied to a user that EXISTS ✅
+2 -> we insert a photos that refers to user that doesn't ❌ 'get error'
+3 -> we insert a photos that isn't tied to any users -> null data insert in the user_id 
+
+
+->Foregin Key Constarints Around Deletion--
+  what happens if you try to delete a user when a photo is still refrencing it
+
+  on Delete Restrict
+                Throw an error
+
+    on Delete No Action
+                Throw an error
+    
+    On Delete CasCade
+                Delete the Photo Tooo
+
+    On Delete Set null
+                Set the user_id of the photo to null
+
+    On Delete Set Default
+                set the user_id of the photo to a default value,if one is provided
+
+Drop table photos
+ 
+->Add Delete caseCade Constarints
+
+CREATE TABLE photos(
+    id serial primary key,
+    url varchar(250),
+    user_id Integer REFERENCES USERS(ID) ON DELETE CASCADE
+)
+
+INSERT into photos(url,user_id)
+values
+('https://one.jpg',4),
+('https//img2.jpg',4),
+('https//img3.jpg',1),
+('https//img4.jpg',2),
+('https//img5.jpg',3)
+
+select * from photos
+
+important:after set on delete cascade you can delete user data which
+is EXISTS in photos table on this time photos record delete as well
+
+Important:delete from users where id=1;
+ now you can check photos table user_id data will delete also
+
+ ->Add Delete Set null Constarints
+
+ CREATE TABLE photos(
+    id serial primary key,
+    url varchar(250),
+    user_id Integer REFERENCES USERS(ID) ON DELETE SET NULL
+)
